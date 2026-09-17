@@ -1,0 +1,13 @@
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { createTeacher } from "./actions";
+import { requireRole } from "@/lib/auth-guards";
+import { STANDARD_SUBJECTS } from "@/lib/subjects";
+
+export const dynamic = "force-dynamic";
+
+export default async function TeachersPage() {
+  await requireRole("ADMIN");
+  const teachers = await prisma.teacher.findMany({ orderBy: { lastName: "asc" } });
+  return <main className="content students-page"><header className="topbar"><div><Link className="back-link" href="/">← Overview</Link><p className="eyebrow">Faculty directory</p><h1>Teachers</h1></div><Link className="primary-button" href="#add-teacher">+ <span>Add teacher</span></Link></header><section className="directory-layout"><div className="panel student-list-panel"><div className="panel-heading"><div><p className="eyebrow">Teaching staff</p><h2>{teachers.length} teachers</h2></div><span className="status-pill green">Live from Neon</span></div><div className="student-table"><div className="student-row student-head"><span>Teacher</span><span>Employee no.</span><span>Subject</span><span>Status</span></div>{teachers.length === 0 ? <div className="empty-state"><strong>No teachers yet</strong><span>Add the first faculty record.</span></div> : teachers.map((teacher) => <div className="student-row" key={teacher.id}><span className="student-name"><i className="avatar small">{teacher.firstName[0]}{teacher.lastName[0]}</i><b>{teacher.firstName} {teacher.lastName}</b><small>{teacher.email}</small></span><span>{teacher.employeeNo}</span><span>{teacher.subject}</span><span className="status-pill green">{teacher.status}</span></div>)}</div></div><div className="panel add-student-panel" id="add-teacher"><div className="panel-heading"><div><p className="eyebrow">New record</p><h2>Add a teacher</h2></div></div><form action={createTeacher} className="student-form"><p className="field-help">Employee number is generated automatically.</p><div className="form-grid"><label>First name<input name="firstName" required placeholder="Maria" /></label><label>Last name<input name="lastName" required placeholder="Chen" /></label></div><label>Email<input name="email" type="email" required placeholder="maria@example.com" /></label><label>Primary subject<select name="subject" required defaultValue=""><option value="" disabled>Select primary subject</option>{STANDARD_SUBJECTS.map((subject) => <option key={subject} value={subject}>{subject}</option>)}</select></label><label>Teacher login password<input name="password" type="password" minLength={8} required placeholder="At least 8 characters" /></label><button className="primary-button form-submit" type="submit">Save teacher</button></form></div></section></main>;
+}

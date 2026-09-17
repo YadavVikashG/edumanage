@@ -1,0 +1,15 @@
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { createExam } from "./actions";
+import { requireRole } from "@/lib/auth-guards";
+import { STANDARD_SUBJECTS } from "@/lib/subjects";
+
+export const dynamic = "force-dynamic";
+
+export default async function ExamsPage() {
+  const session = await requireRole("ADMIN", "TEACHER");
+  const teacher = session.user.role === "TEACHER" ? await prisma.teacher.findUnique({ where: { email: session.user.email ?? "" } }) : null;
+  const classFilter = teacher ? { teacherId: teacher.id } : {};
+  const [exams, classes] = await prisma.$transaction([prisma.exam.findMany({ where: { class: classFilter }, include: { class: true }, orderBy: { date: "asc" } }), prisma.schoolClass.findMany({ where: classFilter, orderBy: { name: "asc" } })]);
+  return <main className="content students-page"><header className="topbar"><div><Link className="back-link" href="/">← Overview</Link><p className="eyebrow">Assessment calendar</p><h1>Examinations</h1></div><Link className="primary-button" href="#add-exam">+ <span>Add exam</span></Link></header><section className="directory-layout"><div className="panel student-list-panel"><div className="panel-heading"><div><p className="eyebrow">Scheduled assessments</p><h2>{exams.length} exams</h2></div><span className="status-pill green">Live from Neon</span></div><div className="student-table"><div className="student-row exam-row student-head"><span>Exam</span><span>Class</span><span>Date</span><span>Status</span></div>{exams.length === 0 ? <div className="empty-state"><strong>No exams yet</strong><span>Create the first assessment schedule.</span></div> : exams.map((exam) => <div className="student-row exam-row" key={exam.id}><span><b>{exam.name}</b><small>{exam.subject}{exam.room ? ` · ${exam.room}` : ""}</small></span><span>{exam.class.name}</span><span>{exam.date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span><span className="status-pill blue">{exam.status}</span></div>)}</div></div><div className="panel add-student-panel" id="add-exam"><div className="panel-heading"><div><p className="eyebrow">New record</p><h2>Schedule an exam</h2></div></div><form action={createExam} className="student-form"><label>Exam name<input name="name" required placeholder="Midterm examination" /></label><label>Subject<input name="subject" list="exam-subjects" required placeholder="Mathematics" /></label><datalist id="exam-subjects">{STANDARD_SUBJECTS.map((subject) => <option key={subject} value={subject} />)}</datalist><div className="form-grid"><label>Date<input name="date" type="date" required /><small className="field-help">Use the local school date.</small></label><label>Room<input name="room" placeholder="Room 204" /></label></div><label>Class<select name="classId" required defaultValue=""><option value="" disabled>Select a class</option>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><button className="primary-button form-submit" type="submit">Schedule exam</button></form></div></section></main>;
+}
