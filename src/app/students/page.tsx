@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth-guards";
 import { createStudent } from "./actions";
+import { resetManagedPassword } from "../forgot-password/actions";
 import { SCHOOL_DIVISIONS, SCHOOL_GRADES } from "@/lib/school-options";
 
 export const dynamic = "force-dynamic";
@@ -143,6 +144,30 @@ export default async function StudentsPage({ searchParams }: { searchParams: Pro
               Save student
             </button>
           </form>
+
+          <div className="password-management">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Account access</p>
+                <h2>Change a student password</h2>
+              </div>
+            </div>
+            <p className="field-help">Use the student&apos;s admission number to set a new login password without knowing the old one.</p>
+            <form action={resetManagedPassword} className="student-form">
+              <input type="hidden" name="role" value="STUDENT" />
+              <label>
+                Admission number
+                <input name="identity" required placeholder="ADM-2026-0001" />
+              </label>
+              <label>
+                New password
+                <input name="password" type="password" minLength={8} required autoComplete="new-password" placeholder="At least 8 characters" />
+              </label>
+              <button className="primary-button form-submit" type="submit">
+                Set student password
+              </button>
+            </form>
+          </div>
         </div>
       </section>
     </main>

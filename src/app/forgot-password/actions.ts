@@ -48,5 +48,7 @@ export async function resetManagedPassword(formData: FormData) {
   if (!email) throw new Error("No matching student or teacher account was found.");
 
   const passwordHash = await bcrypt.hash(result.data.password, 12);
-  await prisma.user.update({ where: { email }, data: { passwordHash } });
+  const account = await prisma.user.findUnique({ where: { email }, select: { id: true, role: true } });
+  if (!account || account.role !== result.data.role) throw new Error("This person does not have a matching login account.");
+  await prisma.user.update({ where: { id: account.id }, data: { passwordHash } });
 }

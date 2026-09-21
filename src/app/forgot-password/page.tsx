@@ -9,9 +9,9 @@ export default async function ForgotPasswordPage() {
     <main className="auth-shell">
       <section className="auth-card">
         <div className="brand"><span className="brand-mark">E</span><span>EduManage</span></div>
-        <p className="eyebrow">Account recovery</p>
-        <h1>Reset password.</h1>
-        <p className="auth-copy">Enter your current password, email, and admission or employee number.</p>
+        <p className="eyebrow">Account access</p>
+        <h1>Change password.</h1>
+        <p className="auth-copy">To change your own password, enter your current password, email, and admission or employee number. If you forgot it, ask an administrator or teacher to reset it.</p>
         <form action={resetPassword} className="student-form">
           <label>Email<input name="email" type="email" required autoComplete="email" /></label>
           <label>Account type<select name="role" defaultValue="STUDENT"><option value="STUDENT">Student</option><option value="TEACHER">Teacher</option></select></label>

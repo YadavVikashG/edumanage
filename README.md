@@ -12,6 +12,11 @@ npm run dev
 
 Open `http://localhost:3000` in your Codespace. Visit `http://localhost:3000/login` to sign in, then use the dashboard routes. Create accounts with the instructions in [AUTHENTICATION.md](AUTHENTICATION.md). For the implementation plan, read [BUILD_GUIDE.md](BUILD_GUIDE.md); for the exact completed and remaining work, read [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
+## Setup guides
+
+- [Local machine setup](LOCAL_SETUP_GUIDE.md) - clone and run EduManage on Windows, macOS, or Linux.
+- [GitHub Codespaces setup](CODESPACES_SETUP_GUIDE.md) - run EduManage in a Codespace, configure the database, open the forwarded port, and develop new features.
+
 ## Current stack
 
 - Next.js App Router and TypeScript
