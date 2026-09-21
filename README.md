@@ -14,6 +14,7 @@ Open `http://localhost:3000` in your Codespace. Visit `http://localhost:3000/log
 
 ## Setup guides
 
+- [Setup guide](setup_guide.md) - quick checklist and shared development workflow.
 - [Local machine setup](LOCAL_SETUP_GUIDE.md) - clone and run EduManage on Windows, macOS, or Linux.
 - [GitHub Codespaces setup](CODESPACES_SETUP_GUIDE.md) - run EduManage in a Codespace, configure the database, open the forwarded port, and develop new features.
 
